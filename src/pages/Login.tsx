@@ -1,0 +1,258 @@
+import { useState } from "react";
+import type { FormEvent } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { Eye, EyeOff, Lock, Mail, Sparkles } from "lucide-react";
+
+import { useAuth } from "../context/AuthContext";
+
+
+export default function Login() {
+  const navigate = useNavigate();
+
+  const { login } = useAuth();
+
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const [showPassword, setShowPassword] =
+    useState(false);
+
+  const [loading, setLoading] = useState(false);
+
+  const [error, setError] = useState("");
+
+
+  const handleSubmit = async (
+    event: FormEvent<HTMLFormElement>
+  ) => {
+    event.preventDefault();
+
+    setError("");
+
+    if (!email || !password) {
+      setError(
+        "Please enter your email and password."
+      );
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      await login(
+        email,
+        password
+      );
+
+      navigate("/");
+
+    } catch (error) {
+      setError(
+        error instanceof Error
+          ? error.message
+          : "Login failed. Please try again."
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
+  return (
+    <div className="min-h-screen bg-slate-950 text-white flex items-center justify-center px-6">
+
+      <div className="w-full max-w-md">
+
+        {/* Logo */}
+
+        <div className="flex justify-center mb-8">
+
+          <div className="flex items-center gap-3">
+
+            <div className="w-11 h-11 rounded-xl bg-blue-600 flex items-center justify-center shadow-lg shadow-blue-600/20">
+
+              <Sparkles
+                size={22}
+                className="text-white"
+              />
+
+            </div>
+
+            <span className="text-2xl font-bold">
+              NexaAI
+            </span>
+
+          </div>
+
+        </div>
+
+
+        {/* Card */}
+
+        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-8 shadow-2xl">
+
+          <div className="text-center mb-8">
+
+            <h1 className="text-2xl font-bold">
+              Welcome back
+            </h1>
+
+            <p className="text-slate-400 mt-2">
+              Sign in to your NexaAI account
+            </p>
+
+          </div>
+
+
+          {/* Error */}
+
+          {error && (
+
+            <div className="mb-5 rounded-lg border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-400">
+
+              {error}
+
+            </div>
+
+          )}
+
+
+          <form
+            onSubmit={handleSubmit}
+            className="space-y-5"
+          >
+
+            {/* Email */}
+
+            <div>
+
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium text-slate-300 mb-2"
+              >
+                Email
+              </label>
+
+              <div className="relative">
+
+                <Mail
+                  size={18}
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500"
+                />
+
+                <input
+                  id="email"
+                  type="email"
+                  value={email}
+                  onChange={(event) =>
+                    setEmail(event.target.value)
+                  }
+                  placeholder="you@example.com"
+                  autoComplete="email"
+                  className="w-full rounded-lg border border-slate-700 bg-slate-950 py-3 pl-10 pr-4 text-white placeholder-slate-600 outline-none transition focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                />
+
+              </div>
+
+            </div>
+
+
+            {/* Password */}
+
+            <div>
+
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium text-slate-300 mb-2"
+              >
+                Password
+              </label>
+
+              <div className="relative">
+
+                <Lock
+                  size={18}
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500"
+                />
+
+                <input
+                  id="password"
+                  type={
+                    showPassword
+                      ? "text"
+                      : "password"
+                  }
+                  value={password}
+                  onChange={(event) =>
+                    setPassword(event.target.value)
+                  }
+                  placeholder="Enter your password"
+                  autoComplete="current-password"
+                  className="w-full rounded-lg border border-slate-700 bg-slate-950 py-3 pl-10 pr-12 text-white placeholder-slate-600 outline-none transition focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+                />
+
+                <button
+                  type="button"
+                  onClick={() =>
+                    setShowPassword(
+                      !showPassword
+                    )
+                  }
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white"
+                >
+                  {showPassword ? (
+                    <EyeOff size={18} />
+                  ) : (
+                    <Eye size={18} />
+                  )}
+                </button>
+
+              </div>
+
+            </div>
+
+
+            {/* Login button */}
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full rounded-lg bg-blue-600 py-3 font-semibold text-white transition hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-60"
+            >
+
+              {loading
+                ? "Signing in..."
+                : "Sign in"}
+
+            </button>
+
+          </form>
+
+
+          {/* Register */}
+
+          <div className="mt-6 text-center text-sm text-slate-400">
+
+            Don't have an account?{" "}
+
+            <Link
+              to="/register"
+              className="font-medium text-blue-400 hover:text-blue-300"
+            >
+              Create an account
+            </Link>
+
+          </div>
+
+        </div>
+
+
+        <p className="text-center text-xs text-slate-600 mt-6">
+          © 2026 NexaAI. All rights reserved.
+        </p>
+
+      </div>
+
+    </div>
+  );
+}
