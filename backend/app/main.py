@@ -1,16 +1,15 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.routes.api_keys import router as api_keys_router
-from app.routes.developer_api import router as developer_api_router
 
 from app.database import Base
 from app.database import engine
-from app.models import User
 
-from app.routes.chat import router as chat_router
-from app.routes.documents import router as documents_router
+from app.routes.api_keys import router as api_keys_router
 from app.routes.analytics import router as analytics_router
 from app.routes.auth import router as auth_router
+from app.routes.chat import router as chat_router
+from app.routes.developer_api import router as developer_api_router
+from app.routes.documents import router as documents_router
 
 
 # --------------------------------------------------
@@ -21,6 +20,10 @@ Base.metadata.create_all(
     bind=engine
 )
 
+
+# --------------------------------------------------
+# FastAPI application
+# --------------------------------------------------
 
 app = FastAPI(
     title="NexaAI API",
@@ -38,6 +41,7 @@ app.add_middleware(
     allow_origins=[
         "http://localhost:5173",
         "http://localhost:5174",
+        "https://nexa-ai-2-o827.onrender.com",
     ],
     allow_credentials=True,
     allow_methods=["*"],
@@ -59,6 +63,7 @@ app.include_router(
 app.include_router(
     documents_router
 )
+
 app.include_router(
     developer_api_router
 )
@@ -66,7 +71,10 @@ app.include_router(
 app.include_router(
     auth_router
 )
-app.include_router(api_keys_router)
+
+app.include_router(
+    api_keys_router
+)
 
 app.include_router(
     analytics_router
