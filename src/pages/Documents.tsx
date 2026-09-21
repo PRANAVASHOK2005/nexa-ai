@@ -28,7 +28,7 @@ import { useAuth } from "../context/AuthContext";
 
 
 const API_URL =
-  "http://127.0.0.1:8000";
+  "https://nexa-ai-1-rel1.onrender.com";
 
 
 type DocumentItem = {
